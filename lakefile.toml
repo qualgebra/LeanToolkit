@@ -1,0 +1,10 @@
+name = "LeanToolkit"
+version = "0.1.0"
+defaultTargets = ["leantoolkit"]
+
+[[lean_lib]]
+name = "LeanToolkit"
+
+[[lean_exe]]
+name = "leantoolkit"
+root = "Main"
