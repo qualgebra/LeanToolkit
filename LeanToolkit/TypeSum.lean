@@ -196,8 +196,8 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   let lhs := d.getId
 
   -- explicit constructors
-  if explicitCs.size > 0 then
-    cs ← includeExplicitConstructors d sig' cs explicitCs
+  --if explicitCs.size > 0 then
+  --  cs ← includeExplicitConstructors d sig' cs explicitCs
 
   -- subtypes
   let subs ← liftTermElabM <| findSubTypes
@@ -231,8 +231,9 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
             `(ctor| |$(mkIdent c.name):ident : $t:term)
         | none => `(ctor| |$(mkIdent c.name):ident))
 
+  let cStx := cStx.toArray ++ explicitCs
   let e' ← liftTermElabM <| PrettyPrinter.delab e
-  let cmd ← `(inductive $(mkIdent lhs) : $e' $(cStx.toArray):ctor*)
+  let cmd ← `(inductive $(mkIdent lhs) : $e' $cStx:ctor*)
   logInfo m!"elaborating {cmd}"
   elabCommand cmd
 

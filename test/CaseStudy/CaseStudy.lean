@@ -11,7 +11,6 @@ inductive T := Boolean.T |+ Nat.T |+ STLC.T
 inductive Term := Boolean.Term |+ Nat.Term |+ STLC.Term
 | isZero (t: Term)
 #print Term
-#print hidden.Term
 
 fn countNodes := Boolean.countNodes |+ Nat.countNodes |+ STLC.countNodes
 | Term.isZero t => 1 + countNodes t
@@ -35,8 +34,6 @@ fn augment := STLC.augment
 inductive TRel: Context → Term → T → Prop := Boolean.TRel |+ Nat.TRel |+ STLC.TRel
 | iz: TRel Γ t T.N → TRel Γ (Term.isZero t) T.Bool
 
-#print hidden.TRel
 #print TRel
 #print STLC.Context
 #print CoeDep
-#print hidden.Term
