@@ -1,3 +1,4 @@
 -- This module serves as the root of the `LeanToolkit` library.
 -- Import modules here that should be built as part of the library.
-import LeanToolkit.TAlgebra
+import LeanToolkit.TypeSum
+import LeanToolkit.FnSum

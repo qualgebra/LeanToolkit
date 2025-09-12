@@ -5,6 +5,10 @@ defaultTargets = ["LeanToolkit"]
 [[lean_lib]]
 name = "LeanToolkit"
 
+[[lean_lib]]
+name = "CaseStudy"
+srcDir = "test"
+
 [[lean_exe]]
 name = "test"
 root = "Main"
