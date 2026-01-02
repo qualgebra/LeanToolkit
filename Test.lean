@@ -1,10 +1,7 @@
 /- test driver -/
---import LeanToolkit
---import test
-
 import Test.simple0
 import Test.simple1
---import LeanToolkitTest.rec0
+import Test.rec0
 
 --import LeanToolkitTest.compose01
 --import LeanToolkitTest.Example

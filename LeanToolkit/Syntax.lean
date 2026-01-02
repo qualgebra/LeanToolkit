@@ -53,7 +53,7 @@ private def includeExplicitConstructors
 -/
 private def resolveTypeName (n: Name): TermElabM (List Name) := do
   let ns ← Lean.resolveGlobalName n
-  logInfo m!"resolved names: {ns}"
+  --logInfo m!"resolved names: {ns}"
   let result ← ns.findM? λ (n, _) ↦ isInductive n
   return result.toList.map Prod.fst
 
@@ -93,7 +93,7 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   let expectedType ← optSig.bindM
     (λ s ↦ do pure <| some (← liftTermElabM <| elabType s))
 
-  logInfo m!"expected type: {expectedType}"
+  --logInfo m!"expected type: {expectedType}"
   let ts ← liftTermElabM <| getTypeVals cs
 
   let ⟨cObjs, e, _⟩ ← liftTermElabM <| typeSumImp ts expectedType lhs
@@ -107,7 +107,7 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   let cStx := cStx.toArray ++ explicitCs
   let e' ← liftTermElabM <| PrettyPrinter.delab e
   let cmd ← `(inductive $(mkIdent lhs) : $e' $cStx:ctor*)
-  logInfo m!"elaborating {cmd}"
+  --logInfo m!"elaborating {cmd}"
   elabCommand cmd
 
   --let s ← liftTermElabM <| getInductiveVal lhs

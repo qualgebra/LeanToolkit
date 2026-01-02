@@ -1,6 +1,6 @@
 import LeanToolkit
 
---namespace test.rec0
+namespace test.rec0
 
 inductive T1
 | T1.C1
@@ -12,14 +12,14 @@ inductive T2
 inductive S := T1 |+ T2
 
 /--
-info: inductive S : Type
+info: inductive test.rec0.S : Type
 number of parameters: 0
 constructors:
-S.C1 : S
-S.C2 : S → S
-S.C3 : S
+test.rec0.S.C1 : S
+test.rec0.S.C2 : S → S
+test.rec0.S.C3 : S
 -/
 #guard_msgs in
 #print S
 
---end test.rec0
+end test.rec0
