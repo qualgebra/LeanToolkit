@@ -9,7 +9,7 @@ open Lean.Parser.Command
 open Meta
 open Std
 
-namespace AR.Lang.Compose.CoeUp
+--namespace AR.Lang.Compose.CoeUp
 
 /-
   Modified version of the one at
@@ -159,4 +159,4 @@ def upCoe
     -- logInfo m!"command elaborated"
   )
 
-namespace AR.Lang.Compose.CoeUp
+--namespace AR.Lang.Compose.CoeUp

@@ -17,8 +17,10 @@ open Lean.Parser.Term
 open Meta
 --open Std
 
-
-initialize envExt: EnvExtension (List (Name × Name)) ← registerEnvExtension (return [])
+/-
+  ⟨subtypeName, supertypeName⟩ environment extension
+-/
+initialize subtypeExt: EnvExtension (List (Name × Name)) ← registerEnvExtension (return [])
 
 structure TracedConstructor where
   name:        Name

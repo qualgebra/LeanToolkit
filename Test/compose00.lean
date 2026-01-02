@@ -1,4 +1,4 @@
-import AR.Tools.Compose
+import LeanToolkit
 
 /-
   Testing
@@ -71,7 +71,7 @@ inductive Boo0 : Nat -> Type
 
 inductive Boo1: Nat → Type
 | boo (n:Nat): Boo1 n
---| boo' : Boo1 0
+| boo' : Boo1 0
 
 #print Boo1
 inductive BooSum: Nat → Type := Boo0 |+ Boo1

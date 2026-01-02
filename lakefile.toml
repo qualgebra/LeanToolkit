@@ -1,5 +1,6 @@
 name = "LeanToolkit"
 version = "0.1.0"
+testDriver = "Test"
 defaultTargets = ["LeanToolkit"]
 
 [[lean_lib]]
@@ -7,8 +8,7 @@ name = "LeanToolkit"
 
 [[lean_lib]]
 name = "CaseStudy"
-srcDir = "test"
+srcDir = "CaseStudy"
 
-[[lean_exe]]
-name = "test"
-root = "Main"
+[[lean_lib]]
+name = "Test"

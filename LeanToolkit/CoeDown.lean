@@ -4,13 +4,13 @@
 import LeanToolkit.Common
 
 open Lean Elab Command Lean.Meta Lean.Elab.Term Lean.Meta.SynthInstance Lean.Elab.Deriving
-open AR.Tools.Compose.Common
+--open AR.Tools.Compose.Common
 open Lean.Parser.Term
 open Lean.Parser.Command
 open Meta
 open Std
 
-namespace AR.Tools.Compose.CoeDown
+-- namespace AR.Tools.Compose.CoeDown
 
 -- TODO: refactor the two copies, here and in CoeUp
 /-
@@ -98,4 +98,4 @@ def downCoe
     logInfo m!"elaborating {c}"
     elabCommand c
 
-end AR.Tools.Compose.CoeDown
+-- end AR.Tools.Compose.CoeDown
