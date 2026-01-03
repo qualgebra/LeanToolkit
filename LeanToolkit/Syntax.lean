@@ -55,7 +55,10 @@ private def resolveTypeName (n: Name): TermElabM (List Name) := do
   let ns ← Lean.resolveGlobalName n
   --logInfo m!"resolved names: {ns}"
   let result ← ns.findM? λ (n, _) ↦ isInductive n
-  return result.toList.map Prod.fst
+  if result.isNone then
+    throwError m!"{n} is not an inductive type"
+  else
+    return result.toList.map Prod.fst
 
 /-
   helper function for turning the constituent type names
