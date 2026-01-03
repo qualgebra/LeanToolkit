@@ -6,7 +6,4 @@ import Test.rec0
 import Test.typeIndices
 import Test.nestedTypes
 import Test.dependentTypes
-
---import LeanToolkitTest.compose01
---import LeanToolkitTest.Example
---import LeanToolkitTest.K3
+import Test.compose0
