@@ -28,6 +28,20 @@ structure TracedConstructor where
   source:      InductiveVal
   extraParams: Nat
 
+def getExplicitParamTypes (e: Expr): (List Expr × Expr) :=
+  match e with
+  | .forallE _ t b bi =>
+        let (o, r) := getExplicitParamTypes b
+        if bi.isImplicit then (o, r) else (t :: o, r)
+  | _ => ([], e)
+
+def isRecursiveConstructor(c: TracedConstructor): Bool :=
+  match c.type with
+  | none => false
+  | some t =>
+      let (as, r) := getExplicitParamTypes t
+      as.any λ a ↦ a == r
+
 class SubType (tSub tSuper: Type) extends Coe tSub tSuper
 
 instance PolySubType {α: Type → Type} {β γ: Type} [i: SubType β γ] [f: Functor α] : SubType (α β) (α γ) where
@@ -79,13 +93,6 @@ def genBindings: List Binding → TermElabM (TSyntaxArray `Lean.Parser.Term.brac
     let t ← genBindings bs'
     let all:TSyntaxArray `Lean.Parser.Term.bracketedBinder := TSyntaxArray.mk (h :: t.toList).toArray
     return all
-
-def getExplicitParamTypes (e: Expr): List Expr :=
-  match e with
-  | .forallE _ t b bi =>
-        let o := getExplicitParamTypes b
-        if bi.isImplicit then o else t :: o
-  | _ => []
 
 def getInductiveVal(typ: Name): TermElabM InductiveVal := do
   let env ← getEnv

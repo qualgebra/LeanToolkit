@@ -5,6 +5,7 @@
 -/
 import LeanToolkit.Common
 import LeanToolkit.TypeSum
+import LeanToolkit.Coe
 
 open Lean
 open Elab
@@ -110,14 +111,14 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   let cStx := cStx.toArray ++ explicitCs
   let e' ← liftTermElabM <| PrettyPrinter.delab e
   let cmd ← `(inductive $(mkIdent lhs) : $e' $cStx:ctor*)
-  --logInfo m!"elaborating {cmd}"
+  logInfo m!"elaborating {cmd}"
   elabCommand cmd
 
   --let s ← liftTermElabM <| getInductiveVal lhs
   --let propType ← liftTermElabM <| isPropFormerType s.type
 
   --if !propType then
-    --genCoeInst lhs e cObjs
+  genCoeInst lhs e cObjs
     --for t in ts do
       --let t ← liftTermElabM <| getInductiveVal t.name
       --upCoe s t
