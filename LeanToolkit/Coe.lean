@@ -39,7 +39,7 @@ def genCoeDepInst (composite t ctorName: Name) (ctor rhs: TSyntax `term)
   let coe := mkIdent `coe
   let cmd ← `(instance $instName:ident $args:bracketedBinder* : $coeDep $tSuper ($ctor) $tSub
               where $coe:ident := $rhs)
-  logInfo m!"elaborating {cmd}"
+  --logInfo m!"elaborating {cmd}"
   elabCommand cmd
 
 def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): CommandElabM Unit := do
@@ -117,8 +117,8 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
                     ($tSuper)
                     where $coe:ident := $coeFnName)
 
-  logInfo m!"elaborating {coeFn}"
-  logInfo m!"elaborating {coeCmd}"
+  --logInfo m!"elaborating {coeFn}"
+  --logInfo m!"elaborating {coeCmd}"
   -- elaborate instance command
   elabCommand coeFn
   elabCommand coeCmd

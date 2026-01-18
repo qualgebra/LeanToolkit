@@ -111,7 +111,7 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   let cStx := cStx.toArray ++ explicitCs
   let e' ← liftTermElabM <| PrettyPrinter.delab e
   let cmd ← `(inductive $(mkIdent lhs) : $e' $cStx:ctor*)
-  logInfo m!"elaborating {cmd}"
+  --logInfo m!"elaborating {cmd}"
   elabCommand cmd
 
   --let s ← liftTermElabM <| getInductiveVal lhs
