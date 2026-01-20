@@ -56,12 +56,7 @@ def getCtors (typ : InductiveVal) : CommandElabM (List TracedConstructor) := do
   let cs ← List.mapM constantInfo2Constructor ci
   return List.map (λ c ↦ ⟨c, typ⟩) cs
 
-def adjustSubTypeName (n: Name): List (Name × Name) → Option Expr
-| [] => none
-| ⟨tSub, tSuper⟩ :: xs =>
-    if n == tSub then some (mkConst tSuper) else
-    if tSub.isPrefixOf n then some (mkConst (n.replacePrefix tSub tSuper)) else
-    adjustSubTypeName n xs
+
 
 --
 --  Given a type t, rename any occurrence of any of the sum constituents to the name of the sum type,

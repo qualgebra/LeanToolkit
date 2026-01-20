@@ -36,13 +36,15 @@ private def adjustFnName (env: Environment) (f: Name): Option Name := do
   match o with
   | some (x,y) => some (f.replacePrefix x y)
   | none => none
-
-private def addFnPair(x y: Name): CommandElabM Unit := do
-  let env ← getEnv
-  let envContents :=  EnvExtension.getState envExt env
-  let envContents := (x,y) :: envContents
-  modifyEnv (envExt.setState . envContents)
 -/
+
+--private
+def addFnPair(x y: Name): CommandElabM Unit := do
+  let env ← getEnv
+  let envContents :=  EnvExtension.getState subtypeExt env
+  let envContents := (x,y) :: envContents
+  modifyEnv (subtypeExt.setState . envContents)
+
 
 /-
   generalizeSubType

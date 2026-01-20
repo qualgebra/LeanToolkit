@@ -1,4 +1,13 @@
 import LeanToolkit
+import Lean.Meta.Tactic
+
+open Lean Meta Elab.Tactic Meta.Tactic
+open Lean Elab Command Lean.Meta Lean.Elab.Term
+open Lean.Parser.Term Elab.Tactic Meta.Tactic
+open Lean.Parser.Command
+open Meta
+open Std
+
 
 inductive T1
 | C1a
@@ -76,3 +85,26 @@ info: def SubType.T2.S : SubType T2 S :=
 
 def x: S := T1.C1a -- up-cast
 def y: T1 := S.C1a -- down-cast
+
+/-
+  function summation testing
+-/
+def f1: T1 → Char
+| T1.C1a => 'a'
+| T1.C1b => 'b'
+
+def f2: T2 → Char
+| T2.C2a => 'a'
+
+fn fSum := f1 |+ f2
+
+/--
+info: def fSum : S → Char :=
+fun x =>
+  match x with
+  | S.C1a => 'a'
+  | S.C1b => 'b'
+  | S.C2a => 'a'
+-/
+#guard_msgs in
+#print fSum

@@ -5,6 +5,7 @@
 -/
 import LeanToolkit.Common
 import LeanToolkit.TypeSum
+import LeanToolkit.FnSum
 import LeanToolkit.Coe
 
 open Lean
@@ -123,3 +124,94 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
       --let t ← liftTermElabM <| getInductiveVal t.name
       --upCoe s t
       --downCoe t s
+
+/-
+
+  Function summation syntax
+
+-/
+
+-- syntactic category for summing functions
+declare_syntax_cat functions
+
+abbrev altT := Lean.Parser.Term.matchAlt
+
+syntax (name := singletonFn) ident: functions
+syntax (name := funSum) functions " |+ " functions : functions
+--syntax (name := expAlts) functions : functions
+
+private partial
+def getFnVals': TSyntax `functions → TermElabM (List Name)
+| `(functions| $i:ident) => return [i.getId]
+| `(functions| $l:functions |+ $r:functions) => do
+      let x ← getFnVals' l
+      let y ← getFnVals' r
+       return x ++ y
+| _ => return  []
+
+def getFnVals (lhs: Name) (stx: TSyntax `functions) (subs: List (Name × Name)): CommandElabM (List Fn) := do
+  let fs' ← liftTermElabM <| getFnVals' stx
+  let fs := List.eraseDups fs'
+  logInfo m!"functions: {fs}"
+  --let env ← getEnv
+
+  fs.forM λ f ↦
+    addFnPair f lhs
+
+  fs.mapM λ f' ↦ do
+    let o' ← liftTermElabM <| Lean.Meta.getUnfoldEqnFor? f'
+    let o := match o' with
+             | some x => x
+             | _ => f'
+
+    let alts ← liftTermElabM <| extractAlts f' ((← getConstInfo o).value!) subs
+
+    logInfo m!"found alts: {alts}"
+    let t := (← getConstInfo f').type
+
+    return (Fn.mk f' t ((← getConstInfo f').value!) alts)
+
+/-
+  elaborator for type sum syntax
+-/
+elab "fn " d:ident sig':optDeclSig " := " fs':functions as:altT* : command => do
+  let lhs := d.getId
+
+  -- subtypes
+  let subs ← liftTermElabM <| findSubTypes
+  logInfo m!"subs: {subs}"
+  let (_, optSig) := expandOptDeclSig sig'
+  let expectedType ← optSig.bindM (λ s ↦ do pure <| some (← liftTermElabM <| elabType s))
+
+  let fs ← getFnVals lhs fs' subs.toList
+
+  logInfo m!"{fs.map Fn.name} - {fs.map Fn.type} - {fs.map Fn.body}"
+
+  let fn ← liftTermElabM <| composeFns subs.toList fs
+
+  logInfo m!"number of alts: {fn.alts.size}"
+
+  let (ps, r) ← liftTermElabM <| toParams fn.type #[]
+  let r' ← liftTermElabM <| PrettyPrinter.delab r
+
+  let mut p := `x
+
+  let sig ← liftTermElabM <| PrettyPrinter.delab fn.type
+    --match ps with
+    --| []      => throwError "empty parameter list"
+    --| x :: _  =>
+        --p := x.name
+    --    liftTermElabM <| genBindings ps
+
+  let body ←
+    if fn.alts.isEmpty then
+      liftTermElabM <| PrettyPrinter.delab fn.body
+    else
+      let xs := TSyntaxArray.mk (fn.alts ++ as.raw)
+      let v ← liftTermElabM <| mkFreshIdent sig
+      `(fun $v => match $v:ident with $xs:matchAlt*)
+
+  let cmd ← `(def $d : $sig := $body)
+
+  logInfo m!"elaborating {cmd}"
+  elabCommand cmd
