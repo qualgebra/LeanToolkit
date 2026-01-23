@@ -96,15 +96,15 @@ def f1: T1 → Char
 def f2: T2 → Char
 | T2.C2a => 'a'
 
-fn fSum := f1 |+ f2
+fn fSum: S → Char := f1 |+ f2
 
 /--
 info: def fSum : S → Char :=
 fun x =>
   match x with
-  | S.C1a => 'a'
-  | S.C1b => 'b'
-  | S.C2a => 'a'
+  | S.C1a => f1 T1.C1a
+  | S.C1b => f1 T1.C1b
+  | S.C2a => f2 T2.C2a
 -/
 #guard_msgs in
 #print fSum

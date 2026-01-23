@@ -115,6 +115,9 @@ elab "inductive " d:ident sig':optDeclSig " := " cs':types explicitCs: ctor* : c
   --logInfo m!"elaborating {cmd}"
   elabCommand cmd
 
+  -- add supertype record to environment extension
+  liftTermElabM <| addSuperType (Expr.const lhs []) cObjs
+
   --let s ← liftTermElabM <| getInductiveVal lhs
   --let propType ← liftTermElabM <| isPropFormerType s.type
 
@@ -149,16 +152,19 @@ def getFnVals': TSyntax `functions → TermElabM (List Name)
        return x ++ y
 | _ => return  []
 
-def getFnVals (lhs: Name) (stx: TSyntax `functions) (subs: List (Name × Name)): CommandElabM (List Fn) := do
+def getFnVals (lhs: Name) (stx: TSyntax `functions) (subs: List (Name × Name)): CommandElabM (List Fn × Expr) := do
   let fs' ← liftTermElabM <| getFnVals' stx
   let fs := List.eraseDups fs'
-  logInfo m!"functions: {fs}"
+  --logInfo m!"functions: {fs}"
   --let env ← getEnv
 
   fs.forM λ f ↦
     addFnPair f lhs
 
-  fs.mapM λ f' ↦ do
+  let mut fnType: Option Expr := none
+  let mut ret: List Fn := []
+
+  for f' in fs do
     let o' ← liftTermElabM <| Lean.Meta.getUnfoldEqnFor? f'
     let o := match o' with
              | some x => x
@@ -166,10 +172,44 @@ def getFnVals (lhs: Name) (stx: TSyntax `functions) (subs: List (Name × Name)):
 
     let alts ← liftTermElabM <| extractAlts f' ((← getConstInfo o).value!) subs
 
-    logInfo m!"found alts: {alts}"
-    let t := (← getConstInfo f').type
+    --logInfo m!"found alts: {alts}"
+    let t := /-adjustType-/ (← getConstInfo f').type --subs
 
-    return (Fn.mk f' t ((← getConstInfo f').value!) alts)
+    if h: fnType.isSome then
+      let e ← liftTermElabM <| Meta.isDefEq (adjustType t subs) (adjustType (fnType.get h) subs)
+      if !e then throwError "Incompatible function types."
+    else
+      fnType := some t
+
+    ret := (Fn.mk f' t ((← getConstInfo f').value!) alts) :: ret
+
+  return (ret.reverse, fnType.get!)
+
+open Parser.Term
+
+def findSubFunction(fns: List Fn) (source: InductiveVal): MetaM (Option Fn) := do
+  fns.findM? λ f ↦ do
+    if h: f.type.isForall then
+      let firstArg := f.type.forallDomain h
+      let n := Lean.mkConst source.name []
+      --logInfo m!"matching {firstArg} with {n}"
+      Meta.isDefEq n firstArg
+    else pure false
+
+def generateMatchAlts(s: SuperType) (fns: List Fn): MetaM (TSyntaxArray `Lean.Parser.Term.matchAlt) := do
+  let alts ← s.cs.mapM λ c ↦ do
+    --logInfo m!"constructor: {c.name}"
+    let cnsTerm := mkIdent c.name
+    let some f ← findSubFunction fns c.source | throwError "Function with matching source not found."
+    let lhs: TSyntax `term ← `(.$cnsTerm)
+    let rhs: TSyntax `term ← `($(mkIdent f.name) (.$cnsTerm))
+    `(matchAltExpr| | $lhs => $rhs)
+
+  pure <| TSyntaxArray.mk alts.toArray
+
+def checkTypeCompat: Expr → Expr → TermElabM Bool
+| .forallE _ t₁ _ _, .forallE _ t₂ _ _ => do return (← Meta.isDefEq t₁ t₂) || (← checkTypeCompat t₁ t₂)
+| t₁, t₂ => t₁.isSubtypeOf t₂
 
 /-
   elaborator for type sum syntax
@@ -179,39 +219,55 @@ elab "fn " d:ident sig':optDeclSig " := " fs':functions as:altT* : command => do
 
   -- subtypes
   let subs ← liftTermElabM <| findSubTypes
-  logInfo m!"subs: {subs}"
-  let (_, optSig) := expandOptDeclSig sig'
-  let expectedType ← optSig.bindM (λ s ↦ do pure <| some (← liftTermElabM <| elabType s))
+  --logInfo m!"subs: {subs}"
+  let (_, some sig') := expandOptDeclSig sig' | throwError "Function signature missing."
+  let sig: TSyntax `term := TSyntax.mk sig'
 
-  let fs ← getFnVals lhs fs' subs.toList
+  let expectedType ← liftTermElabM <| elabType sig
 
-  logInfo m!"{fs.map Fn.name} - {fs.map Fn.type} - {fs.map Fn.body}"
+  let (fs, t) ← getFnVals lhs fs' subs.toList
+
+  --logInfo m!"sum type: {t}"
+
+  let (_, argTypes) ← typeToArgs expectedType
+
+  if argTypes.isEmpty then
+    throwError m!"Bogus function type {t}"
+
+  let t := argTypes[0]!
+  let some s ← liftTermElabM <| findSuperType t | throwError "Type {t} is not a composed type."
+  let alts: TSyntaxArray `Lean.Parser.Term.matchAlt ← liftTermElabM <| generateMatchAlts s fs
 
   let fn ← liftTermElabM <| composeFns subs.toList fs
 
-  logInfo m!"number of alts: {fn.alts.size}"
-
-  let (ps, r) ← liftTermElabM <| toParams fn.type #[]
-  let r' ← liftTermElabM <| PrettyPrinter.delab r
-
-  let mut p := `x
-
-  let sig ← liftTermElabM <| PrettyPrinter.delab fn.type
-    --match ps with
-    --| []      => throwError "empty parameter list"
-    --| x :: _  =>
-        --p := x.name
-    --    liftTermElabM <| genBindings ps
+  --let sig ← liftTermElabM <| PrettyPrinter.delab fn.type
 
   let body ←
     if fn.alts.isEmpty then
       liftTermElabM <| PrettyPrinter.delab fn.body
     else
-      let xs := TSyntaxArray.mk (fn.alts ++ as.raw)
+      let xs := TSyntaxArray.mk (alts ++ as.raw)
       let v ← liftTermElabM <| mkFreshIdent sig
       `(fun $v => match $v:ident with $xs:matchAlt*)
 
   let cmd ← `(def $d : $sig := $body)
 
-  logInfo m!"elaborating {cmd}"
+  --logInfo m!"elaborating {cmd}"
   elabCommand cmd
+
+  --logInfo m!"{fs.map Fn.name} - {fs.map Fn.type} - {fs.map Fn.body}"
+
+
+
+  --logInfo m!"number of alts: {fn.alts.size}"
+
+  --let (ps, r) ← liftTermElabM <| toParams fn.type #[]
+  --let r' ← liftTermElabM <| PrettyPrinter.delab r
+
+  --let mut p := `x
+
+    --match ps with
+    --| []      => throwError "empty parameter list"
+    --| x :: _  =>
+        --p := x.name
+    --    liftTermElabM <| genBindings ps

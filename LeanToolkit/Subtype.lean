@@ -29,6 +29,14 @@ def findSubTypes: TermElabM (Array (Name × Name)) := do
       | ⟨ some x, some y ⟩ => some ⟨ x, y⟩
       | _ => none
       )
+
+def Lean.Expr.isSubtypeOf: Expr → Expr → TermElabM Bool
+| e₁, e₂ => do
+    let t₁ ← PrettyPrinter.delab e₁
+    let t₂ ← PrettyPrinter.delab e₂
+    let t ← elabTerm (← `(SubType $t₁ $t₂)) none
+    let rs ← getInstances t
+    return !rs.isEmpty
 /-
 private def adjustFnName (env: Environment) (f: Name): Option Name := do
   let envContents :=  EnvExtension.getState subtypeExt env
@@ -41,9 +49,9 @@ private def adjustFnName (env: Environment) (f: Name): Option Name := do
 --private
 def addFnPair(x y: Name): CommandElabM Unit := do
   let env ← getEnv
-  let envContents :=  EnvExtension.getState subtypeExt env
+  let envContents :=  EnvExtension.getState subfunctionExt env
   let envContents := (x,y) :: envContents
-  modifyEnv (subtypeExt.setState . envContents)
+  modifyEnv (subfunctionExt.setState . envContents)
 
 
 /-

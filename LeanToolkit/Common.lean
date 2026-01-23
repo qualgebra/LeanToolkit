@@ -17,16 +17,30 @@ open Lean.Parser.Term
 open Meta
 --open Std
 
-/-
-  ⟨subtypeName, supertypeName⟩ environment extension
--/
-initialize subtypeExt: EnvExtension (List (Name × Name)) ← registerEnvExtension (return [])
-
 structure TracedConstructor where
   name:        Name
   type:        Option Expr
   source:      InductiveVal
   extraParams: Nat
+
+structure SuperType where
+  type: Expr
+  cs: List TracedConstructor
+
+/-
+  ⟨subtypeName, supertypeName⟩ environment extension
+-/
+initialize superTypesExt: EnvExtension (List SuperType) ← registerEnvExtension (return [])
+initialize subfunctionExt: EnvExtension (List (Name × Name)) ← registerEnvExtension (return [])
+
+def addSuperType (t: Expr) (cs: List TracedConstructor): MetaM Unit := do
+  let env ← getEnv
+  setEnv <| EnvExtension.modifyState superTypesExt env (λ rs ↦ (SuperType.mk t cs) :: rs)
+
+def findSuperType (t: Expr): MetaM (Option SuperType) := do
+  let env ← getEnv
+  let s := EnvExtension.getState superTypesExt env
+  s.findM? λ x ↦ isDefEq x.type t
 
 def getExplicitParamTypes (e: Expr): (List Expr × Expr) :=
   match e with
