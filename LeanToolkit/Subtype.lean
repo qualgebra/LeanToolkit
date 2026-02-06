@@ -37,14 +37,6 @@ def Lean.Expr.isSubtypeOf: Expr → Expr → TermElabM Bool
     let t ← elabTerm (← `(SubType $t₁ $t₂)) none
     let rs ← getInstances t
     return !rs.isEmpty
-/-
-private def adjustFnName (env: Environment) (f: Name): Option Name := do
-  let envContents :=  EnvExtension.getState subtypeExt env
-  let o := envContents.find? (λ (x,_) ↦ x.isPrefixOf f)
-  match o with
-  | some (x,y) => some (f.replacePrefix x y)
-  | none => none
--/
 
 --private
 def addFnPair(x y: Name): CommandElabM Unit := do

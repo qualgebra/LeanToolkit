@@ -44,18 +44,18 @@ info: def CoeDep.S.C1b.T1 : CoeDep S S.C1b T1 :=
 #print CoeDep.S.C1b.T1
 
 /--
-info: def T1.S.coe : T1 → S :=
+info: def coe.T1.S : T1 → S :=
 fun x =>
   match x with
   | T1.C1a => S.C1a
   | T1.C1b => S.C1b
 -/
 #guard_msgs in
-#print T1.S.coe
+#print coe.T1.S
 
 /--
 info: def SubType.T1.S : SubType T1 S :=
-{ coe := T1.S.coe }
+{ coe := coe.T1.S }
 -/
 #guard_msgs in
 #print SubType.T1.S
@@ -68,17 +68,17 @@ info: def CoeDep.S.C2a.T2 : CoeDep S S.C2a T2 :=
 #print CoeDep.S.C2a.T2
 
 /--
-info: def T2.S.coe : T2 → S :=
+info: def coe.T2.S : T2 → S :=
 fun x =>
   match x with
   | T2.C2a => S.C2a
 -/
 #guard_msgs in
-#print T2.S.coe
+#print coe.T2.S
 
 /--
 info: def SubType.T2.S : SubType T2 S :=
-{ coe := T2.S.coe }
+{ coe := coe.T2.S }
 -/
 #guard_msgs in
 #print SubType.T2.S

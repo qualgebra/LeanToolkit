@@ -11,6 +11,7 @@ inductive Term where
 | Succ (t: Term)
 | Pred (t: Term)
 
+@[simp]
 def countNodes: Term → Nat
 | .Zero => 1
 | .Succ t => 1 + countNodes t
@@ -19,6 +20,12 @@ def countNodes: Term → Nat
 inductive Val: Term → Prop
 | Z: Val .Zero
 | S (v: Term): Val v → Val (.Succ v)
+
+theorem notEmpty(t: Term): countNodes t > 0 := by
+  induction t with
+  | Zero => simp
+  | Succ t' ih => simp[Nat.succ_add]
+  | Pred t' ih => simp[Nat.succ_add]
 
 inductive TRel: Term → T → Prop where
 | Z: TRel .Zero .N

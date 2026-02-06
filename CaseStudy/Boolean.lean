@@ -10,6 +10,7 @@ inductive Term where
 | True | False
 | If (c t₁ t₂: Term)
 
+@[simp]
 def countNodes: Term → Nat
 | .True => 1
 | .False => 1
@@ -17,6 +18,12 @@ def countNodes: Term → Nat
 
 inductive Val: Term → Prop
 | T: Val .True | F: Val .False
+
+theorem notEmpty(t: Term): countNodes t > 0 := by
+  induction t with
+  | True => simp
+  | False => simp
+  | If c t₁ t₂ c_ih t₁_ih t₂_ih => simp[Nat.succ_add]
 
 inductive TRel: Term → T → Prop
 | TT: TRel .True .Bool

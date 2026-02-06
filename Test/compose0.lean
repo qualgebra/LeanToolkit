@@ -58,7 +58,7 @@ info: def test.compose0.CoeDep.sum1.C2.test.compose0.T1 : CoeDep sum1 sum1.C2 T1
 
 /--
 info: def test.compose0.SubType.test.compose0.T1.sum1 : SubType T1 sum1 :=
-{ coe := test.compose0.T1.sum1.coe }
+{ coe := coe.test.compose0.T1.sum1 }
 -/
 #guard_msgs in
 #print SubType.test.compose0.T1.sum1
@@ -71,17 +71,17 @@ info: def test.compose0.CoeDep.sum1.C3.test.compose0.T2 : CoeDep sum1 sum1.C3 T2
 #print CoeDep.sum1.C3.test.compose0.T2
 
 /--
-info: def test.compose0.test.compose0.T2.sum1.coe : T2 → sum1 :=
+info: def test.compose0.coe.test.compose0.T2.sum1 : T2 → sum1 :=
 fun x =>
   match x with
   | T2.C3 => sum1.C3
 -/
 #guard_msgs in
-#print test.compose0.T2.sum1.coe
+#print coe.test.compose0.T2.sum1
 
 /--
 info: def test.compose0.SubType.test.compose0.T2.sum1 : SubType T2 sum1 :=
-{ coe := test.compose0.T2.sum1.coe }
+{ coe := coe.test.compose0.T2.sum1 }
 -/
 #guard_msgs in
 #print SubType.test.compose0.T2.sum1
@@ -112,17 +112,17 @@ info: def test.compose0.CoeDep.sum2.C3.test.compose0.T2 : CoeDep sum2 sum2.C3 T2
 #print CoeDep.sum2.C3.test.compose0.T2
 
 /--
-info: def test.compose0.test.compose0.T2.sum2.coe : T2 → sum2 :=
+info: def test.compose0.coe.test.compose0.T2.sum2 : T2 → sum2 :=
 fun x =>
   match x with
   | T2.C3 => sum2.C3
 -/
 #guard_msgs in
-#print test.compose0.T2.sum2.coe
+#print coe.test.compose0.T2.sum2
 
 /--
 info: def test.compose0.SubType.test.compose0.T2.sum2 : SubType T2 sum2 :=
-{ coe := test.compose0.T2.sum2.coe }
+{ coe := coe.test.compose0.T2.sum2 }
 -/
 #guard_msgs in
 #print SubType.test.compose0.T2.sum2
@@ -142,18 +142,18 @@ info: def test.compose0.CoeDep.sum2.C2.test.compose0.T3 : CoeDep sum2 sum2.C2 T3
 #print CoeDep.sum2.C2.test.compose0.T3
 
 /--
-info: def test.compose0.test.compose0.T3.sum2.coe : T3 → sum2 :=
+info: def test.compose0.coe.test.compose0.T3.sum2 : T3 → sum2 :=
 fun x =>
   match x with
   | T3.C1 n => sum2.C1 n
   | T3.C2 => sum2.C2
 -/
 #guard_msgs in
-#print test.compose0.T3.sum2.coe
+#print coe.test.compose0.T3.sum2
 
 /--
 info: def test.compose0.SubType.test.compose0.T3.sum2 : SubType T3 sum2 :=
-{ coe := test.compose0.T3.sum2.coe }
+{ coe := coe.test.compose0.T3.sum2 }
 -/
 #guard_msgs in
 #print SubType.test.compose0.T3.sum2
@@ -185,18 +185,18 @@ fun {a} => { coe := T4.C5 }
 #print CoeDep.sum3.C5.test.compose0.T4
 
 /--
-info: def test.compose0.test.compose0.T4.sum3.coe : {a : Nat} → T4 a → sum3 a :=
+info: def test.compose0.coe.test.compose0.T4.sum3 : {a : Nat} → T4 a → sum3 a :=
 fun {a} x =>
   match x with
   | T4.C4 => sum3.C4
   | T4.C5 => sum3.C5
 -/
 #guard_msgs in
-#print test.compose0.T4.sum3.coe
+#print coe.test.compose0.T4.sum3
 
 /--
 info: def test.compose0.SubType.test.compose0.T4.sum3 : {a : Nat} → SubType (T4 a) (sum3 a) :=
-fun {a} => { coe := test.compose0.T4.sum3.coe }
+fun {a} => { coe := coe.test.compose0.T4.sum3 }
 -/
 #guard_msgs in
 #print SubType.test.compose0.T4.sum3

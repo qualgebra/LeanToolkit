@@ -38,18 +38,18 @@ info: def Test.simple0.CoeDep.S.C1b.Test.simple0.T1 : CoeDep S S.C1b T1 :=
 
 
 /--
-info: def Test.simple0.Test.simple0.T1.S.coe : T1 → S :=
+info: def Test.simple0.coe.Test.simple0.T1.S : T1 → S :=
 fun x =>
   match x with
   | T1.C1a => S.C1a
   | T1.C1b => S.C1b
 -/
 #guard_msgs in
-#print Test.simple0.T1.S.coe
+#print coe.Test.simple0.T1.S
 
 /--
 info: def Test.simple0.SubType.Test.simple0.T1.S : SubType T1 S :=
-{ coe := Test.simple0.T1.S.coe }
+{ coe := coe.Test.simple0.T1.S }
 -/
 #guard_msgs in
 #print SubType.Test.simple0.T1.S
@@ -62,17 +62,17 @@ info: def Test.simple0.CoeDep.S.C2a.Test.simple0.T2 : CoeDep S S.C2a T2 :=
 #print CoeDep.S.C2a.Test.simple0.T2
 
 /--
-info: def Test.simple0.Test.simple0.T2.S.coe : T2 → S :=
+info: def Test.simple0.coe.Test.simple0.T2.S : T2 → S :=
 fun x =>
   match x with
   | T2.C2a => S.C2a
 -/
 #guard_msgs in
-#print Test.simple0.T2.S.coe
+#print coe.Test.simple0.T2.S
 
 /--
 info: def Test.simple0.SubType.Test.simple0.T2.S : SubType T2 S :=
-{ coe := Test.simple0.T2.S.coe }
+{ coe := coe.Test.simple0.T2.S }
 -/
 #guard_msgs in
 #print SubType.Test.simple0.T2.S

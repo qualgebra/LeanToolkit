@@ -20,18 +20,25 @@ structure Fn where
   body: Expr
   alts: Array Syntax
 
-def adjustSubTypeName (n: Name): List (Name × Name) → Option Expr
-| [] => none
+def adjustFnName (env: Environment) (f: Name): Option Expr := do
+  let envContents :=  EnvExtension.getState subfunctionExt env
+  let o := envContents.find? (λ (x,_) ↦ x.isPrefixOf f)
+  match o with
+  | some (x,y) => (some ∘ Lean.mkConst) (f.replacePrefix x y)
+  | none => none
+
+def adjustSubTypeName (env: Environment) (n: Name): List (Name × Name) → Option Expr
+| [] => adjustFnName env n
 | ⟨tSub, tSuper⟩ :: xs =>
     if n == tSub then some (mkConst tSuper) else
     if tSub.isPrefixOf n then some (mkConst (n.replacePrefix tSub tSuper)) else
-    adjustSubTypeName n xs
+    adjustSubTypeName env n xs
 
 
-def adjustType /-(env: Environment)-/ (t: Expr) (subs: List (Name × Name)): Expr :=
+def adjustType (env: Environment) (t: Expr) (subs: List (Name × Name)): Expr :=
   t.replace λ e ↦
         match e.constName? with
-        | some n' => adjustSubTypeName n' subs >>= some
+        | some n' => adjustSubTypeName env n' subs >>= some
         | none => none
 
 def extractAlts (n:Name) (e: Expr) (subs: List (Name × Name)): TermElabM (Array Syntax) := do
@@ -65,7 +72,7 @@ def extractAlts (n:Name) (e: Expr) (subs: List (Name × Name)): TermElabM (Array
   match m with
   | some m' =>
       let m' ← m'.replaceM λ stx ↦
-        let o := adjustSubTypeName /-env-/ stx.getId subs
+        let o := adjustSubTypeName env stx.getId subs
         match o with
         | some (Expr.const x _) => do
             let r ← `($(mkIdent x))
@@ -82,25 +89,25 @@ def extractAlts (n:Name) (e: Expr) (subs: List (Name × Name)): TermElabM (Array
 
 -/
 
-def composeFns (subs: List (Name × Name)): List Fn → TermElabM Fn
-| [] => throwError "Empty list of functions."
-| x :: [] => do
-    --let env ← getEnv
-    let t := adjustType /-env-/ x.type subs
-    --logInfo m!"alts: {x.alts}"
-    pure (Fn.mk x.name t x.body x.alts)
-| x :: xs => do
-    --let env ← getEnv
-    let r ← composeFns subs xs
-    let t := adjustType /-env-/ x.type subs
-    --logInfo m!"comparing types {t} - {r.type}"
-    if (← isDefEq t r.type) then
-      --logInfo m!"composing alts of dims {x.alts.size} and {r.alts.size}"
-      let sum := x.alts ++ r.alts
-      --logInfo m!"sum: {sum}"
-      return (Fn.mk x.name t x.body sum)
-    else
-      throwError m!"Failed to sum up different types: {t} - {r.type}"
+-- def composeFns (subs: List (Name × Name)): List Fn → TermElabM Fn
+-- | [] => throwError "Empty list of functions."
+-- | x :: [] => do
+--     let env ← getEnv
+--     let t := adjustType env x.type subs
+--     logInfo m!"alts: {x.alts}"
+--     pure (Fn.mk x.name t x.body x.alts)
+-- | x :: xs => do
+--     let env ← getEnv
+--     let r ← composeFns subs xs
+--     let t := adjustType env x.type subs
+--     logInfo m!"comparing types {t} - {r.type}"
+--     if (← isDefEq t r.type) then
+--       logInfo m!"composing alts of dims {x.alts.size} and {r.alts.size}"
+--       let sum := x.alts ++ r.alts
+--       logInfo m!"sum: {sum}"
+--       return (Fn.mk x.name t x.body sum)
+--     else
+--       throwError m!"Failed to sum up different types: {t} - {r.type}"
 
 
 --end AR.Tools.Compose.FnSum

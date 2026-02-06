@@ -54,12 +54,13 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
 
   -- coercion function name
   let coe := mkIdent `coe
-  let coeFnName := mkIdent ((t.append composite).append (`coe))
+  let coeFnName := mkIdent (((`coe).append t).append composite)
 
   let tSub ← liftTermElabM <|
     PrettyPrinter.delab (mkAppN (Expr.fvar (FVarId.mk t)) (ids'.map (Expr.fvar ∘ FVarId.mk)))
   let tSuper ← liftTermElabM <|
     PrettyPrinter.delab (mkAppN (Expr.fvar (FVarId.mk composite)) (ids'.map (Expr.fvar ∘ FVarId.mk)))
+  --logInfo m!"tSub: {tSub} - tSuper: {tSuper}"
 
   -- pattern matching expressions
   let mut pexprs := #[]
@@ -72,7 +73,7 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
 
     let lhs ← `($(mkIdent <| c.source.name.append c.name):ident $argIds:term*)
     --logInfo m!"type: {t}"
-    --logInfo m!"composite: {composite}
+    --logInfo m!"composite: {composite}"
 
     --logInfo m!"isRecursiveConstructor: {c.name} {c.source.name} : {c.type}"
     if !isRecursiveConstructor c then
@@ -108,6 +109,7 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
   let indices:TSyntaxArray `Lean.Parser.Term.bracketedBinder := TSyntaxArray.mk indices''
 
   let sig ← `(optDeclSig| $indices:bracketedBinder* : $tSuper)
+  --logInfo m!"sig: {sig}"
 
   let coeFn ← `(def $coeFnName:ident $sig := $m)
 

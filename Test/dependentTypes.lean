@@ -29,17 +29,17 @@ fun {n} {v} => { coe := Foo.foo n v }
 #print CoeDep.S.foo.test.dependentTypes.Foo
 
 /--
-info: def test.dependentTypes.test.dependentTypes.Foo.S.coe : Foo → S :=
+info: def test.dependentTypes.coe.test.dependentTypes.Foo.S : Foo → S :=
 fun x =>
   match x with
   | Foo.foo n v => S.foo n v
 -/
 #guard_msgs in
-#print test.dependentTypes.Foo.S.coe
+#print coe.test.dependentTypes.Foo.S
 
 /--
 info: def test.dependentTypes.SubType.test.dependentTypes.Foo.S : SubType Foo S :=
-{ coe := test.dependentTypes.Foo.S.coe } -/
+{ coe := coe.test.dependentTypes.Foo.S } -/
 #guard_msgs in
 #print SubType.test.dependentTypes.Foo.S
 
@@ -51,17 +51,17 @@ info: def test.dependentTypes.CoeDep.S.d.test.dependentTypes.Dummy : CoeDep S S.
 #print CoeDep.S.d.test.dependentTypes.Dummy
 
 /--
-info: def test.dependentTypes.test.dependentTypes.Dummy.S.coe : Dummy → S :=
+info: def test.dependentTypes.coe.test.dependentTypes.Dummy.S : Dummy → S :=
 fun x =>
   match x with
   | Dummy.d => S.d
 -/
 #guard_msgs in
-#print test.dependentTypes.Dummy.S.coe
+#print coe.test.dependentTypes.Dummy.S
 
 /--
 info: def test.dependentTypes.SubType.test.dependentTypes.Dummy.S : SubType Dummy S :=
-{ coe := test.dependentTypes.Dummy.S.coe }
+{ coe := coe.test.dependentTypes.Dummy.S }
 -/
 #guard_msgs in
 #print SubType.test.dependentTypes.Dummy.S

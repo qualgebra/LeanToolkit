@@ -7,3 +7,4 @@ import Test.rec0
 -- import Test.nestedTypes
 import Test.dependentTypes
 import Test.compose0
+import CaseStudy.CaseStudy

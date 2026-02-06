@@ -30,7 +30,7 @@ info: def test.rec0.CoeDep.S.C1.test.rec0.T1 : CoeDep S S.C1 T1 :=
 #print CoeDep.S.C1.test.rec0.T1
 
 /--
-info: def test.rec0.test.rec0.T1.S.coe : T1 → S :=
+info: def test.rec0.coe.test.rec0.T1.S : T1 → S :=
 fun x =>
   T1.brecOn x fun x f =>
     (match (motive := (x : T1) → T1.below x → S) x with
@@ -39,11 +39,11 @@ fun x =>
       f
 -/
 #guard_msgs in
-#print test.rec0.T1.S.coe
+#print coe.test.rec0.T1.S
 
 /--
 info: def test.rec0.SubType.test.rec0.T1.S : SubType T1 S :=
-{ coe := test.rec0.T1.S.coe }
+{ coe := coe.test.rec0.T1.S }
 -/
 #guard_msgs in
 #print SubType.test.rec0.T1.S
@@ -56,16 +56,16 @@ info: def test.rec0.CoeDep.S.C3.test.rec0.T2 : CoeDep S S.C3 T2 :=
 #print CoeDep.S.C3.test.rec0.T2
 
 /--
-info: def test.rec0.test.rec0.T2.S.coe : T2 → S :=
+info: def test.rec0.coe.test.rec0.T2.S : T2 → S :=
 fun x =>
   match x with
   | T2.C3 => S.C3
 -/
 #guard_msgs in
-#print test.rec0.T2.S.coe
+#print coe.test.rec0.T2.S
 /--
 info: def test.rec0.SubType.test.rec0.T2.S : SubType T2 S :=
-{ coe := test.rec0.T2.S.coe }
+{ coe := coe.test.rec0.T2.S }
 -/
 #guard_msgs in
 #print SubType.test.rec0.T2.S

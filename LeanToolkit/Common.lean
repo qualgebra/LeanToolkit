@@ -40,7 +40,11 @@ def addSuperType (t: Expr) (cs: List TracedConstructor): MetaM Unit := do
 def findSuperType (t: Expr): MetaM (Option SuperType) := do
   let env ← getEnv
   let s := EnvExtension.getState superTypesExt env
-  s.findM? λ x ↦ isDefEq x.type t
+  s.findM? λ x ↦ do
+    let r ← isDefEq x.type t
+    --logInfo m!"matching {x.type} with {t} - {r}"
+    return r
+
 
 def getExplicitParamTypes (e: Expr): (List Expr × Expr) :=
   match e with

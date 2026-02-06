@@ -8,7 +8,6 @@ name = "LeanToolkit"
 
 [[lean_lib]]
 name = "CaseStudy"
-srcDir = "CaseStudy"
 
 [[lean_lib]]
 name = "Test"
