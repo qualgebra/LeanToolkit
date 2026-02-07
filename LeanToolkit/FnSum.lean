@@ -20,21 +20,6 @@ structure Fn where
   body: Expr
   alts: Array Syntax
 
-def adjustFnName (env: Environment) (f: Name): Option Expr := do
-  let envContents :=  EnvExtension.getState subfunctionExt env
-  let o := envContents.find? (λ (x,_) ↦ x.isPrefixOf f)
-  match o with
-  | some (x,y) => (some ∘ Lean.mkConst) (f.replacePrefix x y)
-  | none => none
-
-def adjustSubTypeName (env: Environment) (n: Name): List (Name × Name) → Option Expr
-| [] => adjustFnName env n
-| ⟨tSub, tSuper⟩ :: xs =>
-    if n == tSub then some (mkConst tSuper) else
-    if tSub.isPrefixOf n then some (mkConst (n.replacePrefix tSub tSuper)) else
-    adjustSubTypeName env n xs
-
-
 def adjustType (env: Environment) (t: Expr) (subs: List (Name × Name)): Expr :=
   t.replace λ e ↦
         match e.constName? with

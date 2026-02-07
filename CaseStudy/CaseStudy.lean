@@ -179,19 +179,39 @@ fn augment: STLC.Context → STLC.Var → STLC.T → STLC.Context := STLC.augmen
 #print augment
 -/
 
+def Context := STLC.Var → T
 
---inductive TRel: STLC.Context → Term → T → Prop := Boolean.TRel |+ Nat.TRel |+ STLC.TRel
---| iz: TRel Γ t T.N → TRel Γ (Term.isZero t) T.Bool
+instance: SubType STLC.Context Context where
+  coe f := λ x ↦ f x
 
--- inductive TRel : STLC.Context → Term → T → Prop
---   | TT : TRel _ Term.True T.Bool
---   | FF : TRel _ Term.False T.Bool
---   | If : {c t₁ : Term} → {τ : T} → {t₂ : Term} → TRel _ c T.Bool → TRel _ t₁ τ → TRel _ t₂ τ → TRel _ (c.If t₁ t₂) τ
---   | Z : TRel _ Term.Zero T.N
---   | S : {t : Term} → TRel _ t T.N → TRel _ t.Succ T.N
---   | P : {t : Term} → TRel _ t T.N → TRel _ t.Pred T.N
---   | V : {Γ : STLC.Context} → (x : STLC.Var) → (τ : T) → Γ x = τ → TRel Γ (Term.V x) τ
---   | iz: TRel Γ t T.N → TRel Γ (Term.isZero t) T.Bool
--- #print TRel
--- #print STLC.Context
--- #print CoeDep
+fn augment: Context → STLC.Var → T → Context := STLC.augment
+
+/--
+info: def augment : Context → STLC.Var → T → Context :=
+fun Γ x τ v => if v = x then τ else Γ v
+-/
+#guard_msgs in
+#print augment
+
+inductive TRel: Context → Term → T → Prop := Boolean.TRel |+ Nat.TRel |+ STLC.TRel
+| iz: TRel Γ t T.N → TRel Γ (Term.isZero t) T.Bool
+
+/--
+info: inductive TRel : Context → Term → T → Prop
+number of parameters: 0
+constructors:
+TRel.TT : ∀ {_ : Context}, TRel _ Term.True T.Bool
+TRel.FF : ∀ {_ : Context}, TRel _ Term.False T.Bool
+TRel.If : ∀ {_ : Context} {c t₁ : Term} {τ : T} {t₂ : Term},
+  TRel _ c T.Bool → TRel _ t₁ τ → TRel _ t₂ τ → TRel _ (c.If t₁ t₂) τ
+TRel.Z : ∀ {_ : Context}, TRel _ Term.Zero T.N
+TRel.S : ∀ {_ : Context} {t : Term}, TRel _ t T.N → TRel _ t.Succ T.N
+TRel.P : ∀ {_ : Context} {t : Term}, TRel _ t T.N → TRel _ t.Pred T.N
+TRel.V : ∀ {Γ : Context} (x : STLC.Var) (τ : T), Γ x = τ → TRel Γ (Term.V x) τ
+TRel.Abs : ∀ {Γ : Context} (x : STLC.Var) (b : Term) (τ₁ τ₂ : T),
+  TRel (augment Γ x τ₁) b τ₂ → TRel Γ (Term.Abs x τ₁ b) (τ₁.Fn τ₂)
+TRel.App : ∀ {Γ : Context} (t₁ t₂ : Term) (τ₁ τ₂ : T), TRel Γ t₁ (τ₁.Fn τ₂) → TRel Γ t₂ τ₁ → TRel Γ (t₁.App t₂) τ₂
+TRel.iz : ∀ {Γ : Context} {t : Term}, TRel Γ t T.N → TRel Γ t.isZero T.Bool
+-/
+#guard_msgs in
+#print TRel
