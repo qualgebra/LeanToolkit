@@ -103,7 +103,8 @@ fn notEmpty (t: Term) : countNodes t > 0 := Boolean.notEmpty |+ Nat.notEmpty |+ 
 | .isZero t   => by simp[countNodes, Nat.succ_add]
 
 /--
-info: def notEmpty : ∀ (t : Term), countNodes t > 0 :=
+info:
+def notEmpty : ∀ (t : Term), countNodes t > 0 :=
 fun x =>
   Term.brecOn x fun x f =>
     (match (motive := ∀ (x : Term) (x_1 : Term.below x), countNodes x > 0) x with
@@ -115,30 +116,41 @@ fun x =>
         of_eq_true
           (Eq.trans
             (Eq.trans
-              (congrArg (fun x => x > 0)
-                (Eq.trans
-                  (congrArg (fun x => x + countNodes e)
-                    (Eq.trans
-                      (congrArg (fun x => x + countNodes t)
-                        (Eq.trans (Nat.succ_add 0 (countNodes c)) (congrArg Nat.succ (Nat.zero_add (countNodes c)))))
-                      (Nat.succ_add (countNodes c) (countNodes t))))
-                  (Nat.succ_add (countNodes c + countNodes t) (countNodes e))))
+              (congrFun'
+                (congrArg GT.gt
+                  (Eq.trans
+                    (congrFun'
+                      (congrArg HAdd.hAdd
+                        (Eq.trans
+                          (congrFun'
+                            (congrArg HAdd.hAdd
+                              (Eq.trans (Nat.succ_add 0 (countNodes c))
+                                (congrArg Nat.succ (Nat.zero_add (countNodes c)))))
+                            (countNodes t))
+                          (Nat.succ_add (countNodes c) (countNodes t))))
+                      (countNodes e))
+                    (Nat.succ_add (countNodes c + countNodes t) (countNodes e))))
+                0)
               gt_iff_lt._simp_1)
             (Nat.zero_lt_succ._simp_1 (countNodes c + countNodes t + countNodes e)))
       | t.Succ => fun x =>
         of_eq_true
           (Eq.trans
             (Eq.trans
-              (congrArg (fun x => x > 0)
-                (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+              (congrFun'
+                (congrArg GT.gt
+                  (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+                0)
               gt_iff_lt._simp_1)
             (Nat.zero_lt_succ._simp_1 (countNodes t)))
       | t.Pred => fun x =>
         of_eq_true
           (Eq.trans
             (Eq.trans
-              (congrArg (fun x => x > 0)
-                (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+              (congrFun'
+                (congrArg GT.gt
+                  (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+                0)
               gt_iff_lt._simp_1)
             (Nat.zero_lt_succ._simp_1 (countNodes t)))
       | Term.Abs v τ t => fun x => Eq.mpr (id gt_iff_lt._simp_1) (Nat.lt_add_left 2 x.1)
@@ -146,19 +158,25 @@ fun x =>
         of_eq_true
           (Eq.trans
             (Eq.trans
-              (congrArg (fun x => x > 0)
-                (Eq.trans
-                  (congrArg (fun x => x + countNodes t₂)
-                    (Eq.trans (Nat.succ_add 0 (countNodes t₁)) (congrArg Nat.succ (Nat.zero_add (countNodes t₁)))))
-                  (Nat.succ_add (countNodes t₁) (countNodes t₂))))
+              (congrFun'
+                (congrArg GT.gt
+                  (Eq.trans
+                    (congrFun'
+                      (congrArg HAdd.hAdd
+                        (Eq.trans (Nat.succ_add 0 (countNodes t₁)) (congrArg Nat.succ (Nat.zero_add (countNodes t₁)))))
+                      (countNodes t₂))
+                    (Nat.succ_add (countNodes t₁) (countNodes t₂))))
+                0)
               gt_iff_lt._simp_1)
             (Nat.zero_lt_succ._simp_1 (countNodes t₁ + countNodes t₂)))
       | t.isZero => fun x =>
         of_eq_true
           (Eq.trans
             (Eq.trans
-              (congrArg (fun x => x > 0)
-                (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+              (congrFun'
+                (congrArg GT.gt
+                  (Eq.trans (Nat.succ_add 0 (countNodes t)) (congrArg Nat.succ (Nat.zero_add (countNodes t)))))
+                0)
               gt_iff_lt._simp_1)
             (Nat.zero_lt_succ._simp_1 (countNodes t))))
       f

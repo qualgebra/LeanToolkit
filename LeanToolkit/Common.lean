@@ -2,20 +2,8 @@
 --  Common.lean
 --
 import Lean
-import Lean.Elab.Term
-import Lean.Elab.Deriving.Basic
-import Lean.Elab.Deriving.Util
-import Lean.Meta.Inductive
-import Lean.Meta.Transform
 
-open Lean
-open Elab
-open Command
-open Lean.Meta
-open Lean.Elab.Term
-open Lean.Parser.Term
-open Meta
---open Std
+open Lean Meta Lean.Elab.Term
 
 structure TracedConstructor where
   name:        Name
