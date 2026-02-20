@@ -6,7 +6,8 @@ import LeanToolkit
 inductive T := Boolean.T |+ Nat.T |+ STLC.T
 
 /--
-info: inductive T : Type
+info:
+inductive T : Type
 number of parameters: 0
 constructors:
 T.Bool : T
@@ -21,7 +22,8 @@ inductive Term := Boolean.Term |+ Nat.Term |+ STLC.Term
 | isZero (t: Term)
 
 /--
-info: inductive Term : Type
+info:
+inductive Term : Type
 number of parameters: 0
 constructors:
 Term.True : Term
@@ -47,7 +49,8 @@ fn countNodes: Term → Nat := Boolean.countNodes |+ Nat.countNodes |+ STLC.coun
 | Term.If c t e => 1 + countNodes c + countNodes t + countNodes e
 
 /--
-info: def countNodes : Term → Nat :=
+info:
+def countNodes : Term → Nat :=
 fun x =>
   Term.brecOn x fun x f =>
     (match (motive := (x : Term) → Term.below x → Nat) x with
@@ -69,7 +72,8 @@ fun x =>
 inductive Val := Boolean.Val |+ Nat.Val |+ STLC.Val
 
 /--
-info: inductive Val : Term → Prop
+info:
+inductive Val : Term → Prop
 number of parameters: 0
 constructors:
 Val.T : Val Term.True
@@ -215,7 +219,8 @@ inductive TRel: Context → Term → T → Prop := Boolean.TRel |+ Nat.TRel |+ S
 | iz: TRel Γ t T.N → TRel Γ (Term.isZero t) T.Bool
 
 /--
-info: inductive TRel : Context → Term → T → Prop
+info:
+inductive TRel : Context → Term → T → Prop
 number of parameters: 0
 constructors:
 TRel.TT : ∀ {_ : Context}, TRel _ Term.True T.Bool

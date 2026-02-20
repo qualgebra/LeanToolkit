@@ -158,11 +158,38 @@ K3Term.Imp : K3Term → K3Term → K3Term
 #guard_msgs in
 #print K3Term
 
+/--
+info:
+def coe.Boolean.Term.K3Term : Boolean.Term → K3Term :=
+fun x =>
+  match x with
+  | Boolean.Term.T => K3Term.T
+  | Boolean.Term.F => K3Term.F
+-/
+#guard_msgs in
+#print coe.Boolean.Term.K3Term
+
+/--
+info:
+def SubType.Boolean.Term.K3Term : SubType Boolean.Term K3Term :=
+{ coe := coe.Boolean.Term.K3Term }
+-/
+#guard_msgs in
+#print SubType.Boolean.Term.K3Term
+
+/--
+info:
+def CoeDep.K3Term.T.Boolean.Term : CoeDep K3Term K3Term.T Boolean.Term :=
+{ coe := Boolean.Term.T }
+-/
+#guard_msgs in
+#print CoeDep.K3Term.T.Boolean.Term
+
 fn K3countNodes: K3Term → Nat := Boolean.countNodes |+ Indet.countNodes |+ Ops.countNodes
-| .Neg t    => 1 + (K3countNodes t)
+| .Neg t      => 1 + K3countNodes t
 | .And t₁ t₂  => 1 + K3countNodes t₁ + K3countNodes t₂
 | .Or t₁ t₂   => 1 + K3countNodes t₁ + K3countNodes t₂
-| .Imp t₁ t₂  => 1 + K3countNodes t₁ + (K3countNodes t₂)
+| .Imp t₁ t₂  => 1 + K3countNodes t₁ + K3countNodes t₂
 
 /--
 info:
