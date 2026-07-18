@@ -41,12 +41,18 @@ def getExplicitParamTypes (e: Expr): (List Expr × Expr) :=
         if bi.isImplicit then (o, r) else (t :: o, r)
   | _ => ([], e)
 
+def sameHead: Expr → Expr → Bool
+| (Expr.app a _), (Expr.app b _) => sameHead a b
+| Expr.app (Expr.const a _) _, Expr.const b _ => a == b
+| Expr.const a _, Expr.app (Expr.const b _) _ => a == b
+| a, b => a == b
+
 def isRecursiveConstructor(c: TracedConstructor): Bool :=
   match c.type with
   | none => false
   | some t =>
       let (as, r) := getExplicitParamTypes t
-      as.any λ a ↦ a == r
+      as.any λ a ↦ sameHead a r
 
 class SubType (tSub tSuper: Type) extends Coe tSub tSuper
 

@@ -1,7 +1,6 @@
 import LeanToolkit
 
 /- TODO: The CoeDep instances depend on type indices, and this doesn't seem to work currently. -/
-/-
 namespace test.typeIndices
 
 inductive T1: Nat → Type
@@ -12,11 +11,6 @@ inductive T2: Nat → Type
 | C3: T2 1
 
 inductive S := T1 |+ T2
-
-abbrev X := T1
-
-instance CoeDep.S.C1.test.typeIndices.T1l: CoeDep (S _) (S.C1) (X 0) where
-  coe := T1.C1 --test.typeIndices.T1.C1
 
 /--
 info: inductive test.typeIndices.S : Nat → Type
@@ -30,7 +24,26 @@ test.typeIndices.S.C3 : S 1
 #print S
 
 /--
-info: def test.typeIndices.test.typeIndices.T1.S.coe : {a : Nat} → T1 a → S a :=
+info: def test.typeIndices.coeDep.S.C1.test.typeIndices.T1 : CoeDep (S 0) S.C1 (T1 0) :=
+{ coe := T1.C1 }
+-/
+#guard_msgs in
+#print coeDep.S.C1.test.typeIndices.T1
+
+/-
+  S.C2 does not have a CoeDep instance because it is a recursive constructor.
+-/
+
+/--
+info: def test.typeIndices.coeDep.S.C3.test.typeIndices.T2 : CoeDep (S 1) S.C3 (T2 1) :=
+{ coe := T2.C3 }
+-/
+#guard_msgs in
+#print coeDep.S.C3.test.typeIndices.T2
+
+/--
+info:
+def test.typeIndices.coe.test.typeIndices.T1.S : {a : Nat} → T1 a → S a :=
 fun {a} x =>
   T1.brecOn x fun {a} x f =>
     (match (motive := (a : Nat) → (x : T1 a) → T1.below x → S a) a, x with
@@ -39,14 +52,33 @@ fun {a} x =>
       f
 -/
 #guard_msgs in
-#print test.typeIndices.T1.S.coe
+#print coe.test.typeIndices.T1.S
 
 /--
 info: def test.typeIndices.SubType.test.typeIndices.T1.S : {a : Nat} → SubType (T1 a) (S a) :=
-fun {a} => { coe := test.typeIndices.T1.S.coe }
+fun {a} => { coe := coe.test.typeIndices.T1.S }
 -/
 #guard_msgs in
 #print SubType.test.typeIndices.T1.S
+
+/--
+info:
+def test.typeIndices.coe.test.typeIndices.T2.S : {a : Nat} → T2 a → S a :=
+fun {a} x =>
+  match a, x with
+  | .(1), T2.C3 => S.C3
+-/
+#guard_msgs in
+#print coe.test.typeIndices.T2.S
+
+/--
+info:
+def test.typeIndices.SubType.test.typeIndices.T2.S : {a : Nat} → SubType (T2 a) (S a) :=
+fun {a} => { coe := coe.test.typeIndices.T2.S }
+-/
+#guard_msgs in
+#print SubType.test.typeIndices.T2.S
+
 
 def x := T1.C1
 def y: S 0 := x
@@ -54,21 +86,4 @@ def y: S 0 := x
 def a := T1.C2 x
 def b: S 1 := a
 
-/--
-info: def test.typeIndices.test.typeIndices.T2.S.coe : {a : Nat} → T2 a → S a :=
-fun {a} x =>
-  match a, x with
-  | .(1), T2.C3 => S.C3
--/
-#guard_msgs in
-#print test.typeIndices.T2.S.coe
-
-/--
-info: def test.typeIndices.SubType.test.typeIndices.T2.S : {a : Nat} → SubType (T2 a) (S a) :=
-fun {a} => { coe := test.typeIndices.T2.S.coe }
--/
-#guard_msgs in
-#print SubType.test.typeIndices.T2.S
-
 end test.typeIndices
--/

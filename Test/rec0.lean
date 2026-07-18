@@ -23,11 +23,11 @@ test.rec0.S.C3 : S
 #print S
 
 /--
-info: def test.rec0.CoeDep.S.C1.test.rec0.T1 : CoeDep S S.C1 T1 :=
+info: def test.rec0.coeDep.S.C1.test.rec0.T1 : CoeDep S S.C1 T1 :=
 { coe := T1.C1 }
 -/
 #guard_msgs in
-#print CoeDep.S.C1.test.rec0.T1
+#print coeDep.S.C1.test.rec0.T1
 
 /--
 info: def test.rec0.coe.test.rec0.T1.S : T1 → S :=
@@ -49,11 +49,11 @@ info: def test.rec0.SubType.test.rec0.T1.S : SubType T1 S :=
 #print SubType.test.rec0.T1.S
 
 /--
-info: def test.rec0.CoeDep.S.C3.test.rec0.T2 : CoeDep S S.C3 T2 :=
+info: def test.rec0.coeDep.S.C3.test.rec0.T2 : CoeDep S S.C3 T2 :=
 { coe := T2.C3 }
 -/
 #guard_msgs in
-#print CoeDep.S.C3.test.rec0.T2
+#print coeDep.S.C3.test.rec0.T2
 
 /--
 info: def test.rec0.coe.test.rec0.T2.S : T2 → S :=

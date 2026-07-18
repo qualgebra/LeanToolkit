@@ -43,18 +43,18 @@ test.compose0.sum1.EC : sum1
 #print sum1
 
 /--
-info: def test.compose0.CoeDep.sum1.C1.test.compose0.T1 : CoeDep sum1 sum1.C1 T1 :=
+info: def test.compose0.coeDep.sum1.C1.test.compose0.T1 : CoeDep sum1 sum1.C1 T1 :=
 { coe := T1.C1 }
 -/
 #guard_msgs in
-#print CoeDep.sum1.C1.test.compose0.T1
+#print coeDep.sum1.C1.test.compose0.T1
 
 /--
-info: def test.compose0.CoeDep.sum1.C2.test.compose0.T1 : CoeDep sum1 sum1.C2 T1 :=
+info: def test.compose0.coeDep.sum1.C2.test.compose0.T1 : CoeDep sum1 sum1.C2 T1 :=
 { coe := T1.C2 }
 -/
 #guard_msgs in
-#print CoeDep.sum1.C2.test.compose0.T1
+#print coeDep.sum1.C2.test.compose0.T1
 
 /--
 info: def test.compose0.SubType.test.compose0.T1.sum1 : SubType T1 sum1 :=
@@ -64,11 +64,11 @@ info: def test.compose0.SubType.test.compose0.T1.sum1 : SubType T1 sum1 :=
 #print SubType.test.compose0.T1.sum1
 
 /--
-info: def test.compose0.CoeDep.sum1.C3.test.compose0.T2 : CoeDep sum1 sum1.C3 T2 :=
+info: def test.compose0.coeDep.sum1.C3.test.compose0.T2 : CoeDep sum1 sum1.C3 T2 :=
 { coe := T2.C3 }
 -/
 #guard_msgs in
-#print CoeDep.sum1.C3.test.compose0.T2
+#print coeDep.sum1.C3.test.compose0.T2
 
 /--
 info: def test.compose0.coe.test.compose0.T2.sum1 : T2 → sum1 :=
@@ -105,11 +105,11 @@ test.compose0.sum2.C2 : sum2
 #print sum2
 
 /--
-info: def test.compose0.CoeDep.sum2.C3.test.compose0.T2 : CoeDep sum2 sum2.C3 T2 :=
+info: def test.compose0.coeDep.sum2.C3.test.compose0.T2 : CoeDep sum2 sum2.C3 T2 :=
 { coe := T2.C3 }
 -/
 #guard_msgs in
-#print CoeDep.sum2.C3.test.compose0.T2
+#print coeDep.sum2.C3.test.compose0.T2
 
 /--
 info: def test.compose0.coe.test.compose0.T2.sum2 : T2 → sum2 :=
@@ -128,18 +128,18 @@ info: def test.compose0.SubType.test.compose0.T2.sum2 : SubType T2 sum2 :=
 #print SubType.test.compose0.T2.sum2
 
 /--
-info: def test.compose0.CoeDep.sum2.C1.test.compose0.T3 : {n : Nat} → CoeDep sum2 (sum2.C1 n) T3 :=
+info: def test.compose0.coeDep.sum2.C1.test.compose0.T3 : {n : Nat} → CoeDep sum2 (sum2.C1 n) T3 :=
 fun {n} => { coe := T3.C1 n }
 -/
 #guard_msgs in
-#print CoeDep.sum2.C1.test.compose0.T3
+#print coeDep.sum2.C1.test.compose0.T3
 
 /--
-info: def test.compose0.CoeDep.sum2.C2.test.compose0.T3 : CoeDep sum2 sum2.C2 T3 :=
+info: def test.compose0.coeDep.sum2.C2.test.compose0.T3 : CoeDep sum2 sum2.C2 T3 :=
 { coe := T3.C2 }
 -/
 #guard_msgs in
-#print CoeDep.sum2.C2.test.compose0.T3
+#print coeDep.sum2.C2.test.compose0.T3
 
 /--
 info: def test.compose0.coe.test.compose0.T3.sum2 : T3 → sum2 :=
@@ -171,18 +171,18 @@ test.compose0.sum3.C5 : {n : Nat} → sum3 n
 #print sum3
 
 /--
-info: def test.compose0.CoeDep.sum3.C4.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C4 (T4 a) :=
+info: def test.compose0.coeDep.sum3.C4.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C4 (T4 a) :=
 fun {a} => { coe := T4.C4 }
 -/
 #guard_msgs in
-#print CoeDep.sum3.C4.test.compose0.T4
+#print coeDep.sum3.C4.test.compose0.T4
 
 /--
-info: def test.compose0.CoeDep.sum3.C5.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C5 (T4 a) :=
+info: def test.compose0.coeDep.sum3.C5.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C5 (T4 a) :=
 fun {a} => { coe := T4.C5 }
 -/
 #guard_msgs in
-#print CoeDep.sum3.C5.test.compose0.T4
+#print coeDep.sum3.C5.test.compose0.T4
 
 /--
 info: def test.compose0.coe.test.compose0.T4.sum3 : {a : Nat} → T4 a → sum3 a :=
@@ -202,7 +202,7 @@ fun {a} => { coe := coe.test.compose0.T4.sum3 }
 #print SubType.test.compose0.T4.sum3
 
 /-
- TODO: this example combines depend types and type families, and we still don't support families.
+ TODO: this example combines dependent types and type families, and we still don't support families.
 
 inductive sum5:= T6 |+ T7 |+ T6
 

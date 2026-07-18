@@ -23,18 +23,18 @@ Test.simple0.S.C2a : S
 #print S
 
 /--
-info: def Test.simple0.CoeDep.S.C1a.Test.simple0.T1 : CoeDep S S.C1a T1 :=
+info: def Test.simple0.coeDep.S.C1a.Test.simple0.T1 : CoeDep S S.C1a T1 :=
 { coe := T1.C1a }
 -/
 #guard_msgs in
-#print CoeDep.S.C1a.Test.simple0.T1
+#print coeDep.S.C1a.Test.simple0.T1
 
 /--
-info: def Test.simple0.CoeDep.S.C1b.Test.simple0.T1 : CoeDep S S.C1b T1 :=
+info: def Test.simple0.coeDep.S.C1b.Test.simple0.T1 : CoeDep S S.C1b T1 :=
 { coe := T1.C1b }
 -/
 #guard_msgs in
-#print CoeDep.S.C1b.Test.simple0.T1
+#print coeDep.S.C1b.Test.simple0.T1
 
 
 /--
@@ -55,11 +55,11 @@ info: def Test.simple0.SubType.Test.simple0.T1.S : SubType T1 S :=
 #print SubType.Test.simple0.T1.S
 
 /--
-info: def Test.simple0.CoeDep.S.C2a.Test.simple0.T2 : CoeDep S S.C2a T2 :=
+info: def Test.simple0.coeDep.S.C2a.Test.simple0.T2 : CoeDep S S.C2a T2 :=
 { coe := T2.C2a }
 -/
 #guard_msgs in
-#print CoeDep.S.C2a.Test.simple0.T2
+#print coeDep.S.C2a.Test.simple0.T2
 
 /--
 info: def Test.simple0.coe.Test.simple0.T2.S : T2 → S :=

@@ -4,15 +4,8 @@ inductive T1
 | C1a
 | C1b
 
---def index1: T1 → Nat
---| T1.C1a => 0
---| T1.C1b => 1
-
 inductive T2
 | C2a
-
---def index2: T2 → Nat
---| T2.C2a => 2
 
 inductive S := T1 |+ T2
 
@@ -27,25 +20,44 @@ S.C2a : S
 #guard_msgs in
 #print S
 
---instance: CoeDep S S.C1a T1 where
---  coe := T1.C1a
+/--
+info: def coeDep.S.C1a.T1 : CoeDep S S.C1a T1 :=
+{ coe := T1.C1a }
+-/
+#guard_msgs in
+#print coeDep.S.C1a.T1
 
---instance: CoeDep S S.C1b T1 where
---  coe := T1.C1b
+/--
+info: def coeDep.S.C1b.T1 : CoeDep S S.C1b T1 :=
+{ coe := T1.C1b }
+-/
+#guard_msgs in
+#print coeDep.S.C1b.T1
 
---instance: CoeDep S S.C2a T2 where
---  coe := T2.C2a
+/--
+info: def coeDep.S.C2a.T2 : CoeDep S S.C2a T2 :=
+{ coe := T2.C2a }
+-/
+#guard_msgs in
+#print coeDep.S.C2a.T2
 
--- def index: S → Nat
--- | S.C1a => index1 S.C1a
--- | S.C1b => index1 S.C1b
--- | S.C2a => index2 S.C2a
+def index1: T1 → Nat
+| .C1a => 1
+| .C1b => 2
 
--- def index'(x:S): Nat := by
---   cases x with
---   | C1a => apply index1 S.C1a
---   | C1b => apply index1 S.C1b
---   | C2a => apply index2 S.C2a
+def index2: T2 → Nat
+| .C2a => 1
 
--- fn index'' := index1 |+ index2
--- #print index''
+fn indexS: S → Nat := index1 |+ index2
+
+/--
+info:
+def indexS : S → Nat :=
+fun x =>
+  match x with
+  | S.C1a => index1 T1.C1a
+  | S.C1b => index1 T1.C1b
+  | S.C2a => index2 T2.C2a
+-/
+#guard_msgs in
+#print indexS

@@ -29,15 +29,20 @@ def typeToArgs (t?: Option Expr): CommandElabM (Array Name × Array Expr) := do
   let (a,b) ← typeToArgs' t? #[]
   return (a.reverse, b.reverse)
 
-def genCoeDepInst (composite t ctorName: Name) (ctor rhs: TSyntax `term)
+def genCoeDepInst (composite t ctorName: Name) (ctr: TracedConstructor) (ctor rhs: TSyntax `term)
   (args: TSyntaxArray `Lean.Parser.Term.bracketedBinder) (tSub tSuper: TSyntax `term): CommandElabM Unit := do
 
-  let instName := mkIdent <| (((`CoeDep).append composite).append ctorName).append t
+  let instName := mkIdent <| (((`coeDep).append composite).append ctorName).append t
   --let idComposite := mkIdent composite
   --let id_t := mkIdent t
+  let ctorT' := if h: ctr.type.isSome then ctr.type.get h else mkConst composite []
+  let ctorT: Expr ← liftTermElabM <| forallTelescope ctorT' λ _ e ↦ return e
+  let t_ctorT ← liftTermElabM <| PrettyPrinter.delab ctorT
+  let subt := ctorT.replace λ e ↦ if e.isConstOf composite then mkConst t else none
+  let t_subt ← liftTermElabM <| PrettyPrinter.delab subt
   let coeDep := mkIdent `CoeDep
   let coe := mkIdent `coe
-  let cmd ← `(instance $instName:ident $args:bracketedBinder* : $coeDep $tSuper ($ctor) $tSub
+  let cmd ← `(instance $instName:ident $args:bracketedBinder* : $coeDep $t_ctorT ($ctor) $t_subt
               where $coe:ident := $rhs)
   --logInfo m!"elaborating {cmd}"
   elabCommand cmd
@@ -81,7 +86,7 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
       let consArgs: TSyntaxArray `Lean.Parser.Term.bracketedBinder ← argIds_ts'.mapM λ (i, t) ↦ do
         let t' ← liftTermElabM <| PrettyPrinter.delab t
         `(bracketedBinder| {$i:ident : $t'})
-      genCoeDepInst composite t c.name consWithParams lhs (bbs.append consArgs) tSub tSuper
+      genCoeDepInst composite t c.name c consWithParams lhs (/-bbs.append-/ consArgs) tSub tSuper
 
     let argTerms ← argIds_ts'.mapM
       (λ (id, t') ↦ do

@@ -21,12 +21,12 @@ test.dependentTypes.S.d : S
 #print S
 
 /--
-info: def test.dependentTypes.CoeDep.S.foo.test.dependentTypes.Foo : {n : Nat} →
+info: def test.dependentTypes.coeDep.S.foo.test.dependentTypes.Foo : {n : Nat} →
   {v : Vector Nat n} → CoeDep S (S.foo n v) Foo :=
 fun {n} {v} => { coe := Foo.foo n v }
 -/
 #guard_msgs in
-#print CoeDep.S.foo.test.dependentTypes.Foo
+#print coeDep.S.foo.test.dependentTypes.Foo
 
 /--
 info: def test.dependentTypes.coe.test.dependentTypes.Foo.S : Foo → S :=
@@ -44,11 +44,11 @@ info: def test.dependentTypes.SubType.test.dependentTypes.Foo.S : SubType Foo S 
 #print SubType.test.dependentTypes.Foo.S
 
 /--
-info: def test.dependentTypes.CoeDep.S.d.test.dependentTypes.Dummy : CoeDep S S.d Dummy :=
+info: def test.dependentTypes.coeDep.S.d.test.dependentTypes.Dummy : CoeDep S S.d Dummy :=
 { coe := Dummy.d }
 -/
 #guard_msgs in
-#print CoeDep.S.d.test.dependentTypes.Dummy
+#print coeDep.S.d.test.dependentTypes.Dummy
 
 /--
 info: def test.dependentTypes.coe.test.dependentTypes.Dummy.S : Dummy → S :=
