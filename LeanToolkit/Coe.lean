@@ -30,19 +30,25 @@ def typeToArgs (t?: Option Expr): CommandElabM (Array Name × Array Expr) := do
   return (a.reverse, b.reverse)
 
 def genCoeDepInst (composite t ctorName: Name) (ctr: TracedConstructor) (ctor rhs: TSyntax `term)
-  (args: TSyntaxArray `Lean.Parser.Term.bracketedBinder) (tSub tSuper: TSyntax `term): CommandElabM Unit := do
+  (args: TSyntaxArray `Lean.Parser.Term.bracketedBinder) : CommandElabM Unit := do
 
   let instName := mkIdent <| (((`coeDep).append composite).append ctorName).append t
   --let idComposite := mkIdent composite
   --let id_t := mkIdent t
   let ctorT' := if h: ctr.type.isSome then ctr.type.get h else mkConst composite []
-  let ctorT: Expr ← liftTermElabM <| forallTelescope ctorT' λ _ e ↦ return e
-  let t_ctorT ← liftTermElabM <| PrettyPrinter.delab ctorT
-  let subt := ctorT.replace λ e ↦ if e.isConstOf composite then mkConst t else none
-  let t_subt ← liftTermElabM <| PrettyPrinter.delab subt
-  let coeDep := mkIdent `CoeDep
+  let t_ctorT ← liftTermElabM <| forallTelescope ctorT' λ _ ctorT ↦ do
+    let t_ctorT ← PrettyPrinter.delab ctorT
+    let subt := ctorT.replace λ e ↦ if e.isConstOf composite then mkConst t else none
+    let t_subt ← PrettyPrinter.delab subt
+    let e ← `(CoeDep $t_ctorT $ctor $t_subt)
+    return e
+
+  --logInfo m!"t_ctorT: {t_ctorT}"
+  --let t_ctorT ← liftTermElabM <| PrettyPrinter.delab ctorT
+  --let subt := ctorT.replace λ e ↦ if e.isConstOf composite then mkConst t else none
+  --let t_subt ← liftTermElabM <| PrettyPrinter.delab subt
   let coe := mkIdent `coe
-  let cmd ← `(instance $instName:ident $args:bracketedBinder* : $coeDep $t_ctorT ($ctor) $t_subt
+  let cmd ← `(instance $instName:ident $args:bracketedBinder* : $t_ctorT
               where $coe:ident := $rhs)
   --logInfo m!"elaborating {cmd}"
   elabCommand cmd
@@ -86,7 +92,7 @@ def genForT(t composite: Name) (ctype: Expr) (cs': List TracedConstructor): Comm
       let consArgs: TSyntaxArray `Lean.Parser.Term.bracketedBinder ← argIds_ts'.mapM λ (i, t) ↦ do
         let t' ← liftTermElabM <| PrettyPrinter.delab t
         `(bracketedBinder| {$i:ident : $t'})
-      genCoeDepInst composite t c.name c consWithParams lhs (/-bbs.append-/ consArgs) tSub tSuper
+      genCoeDepInst composite t c.name c consWithParams lhs (/-bbs.append-/ consArgs)
 
     let argTerms ← argIds_ts'.mapM
       (λ (id, t') ↦ do

@@ -171,15 +171,15 @@ test.compose0.sum3.C5 : {n : Nat} → sum3 n
 #print sum3
 
 /--
-info: def test.compose0.coeDep.sum3.C4.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C4 (T4 a) :=
-fun {a} => { coe := T4.C4 }
+info: def test.compose0.coeDep.sum3.C4.test.compose0.T4 : {n : Nat} → CoeDep (sum3 n) sum3.C4 (T4 n) :=
+fun {n} => { coe := T4.C4 }
 -/
 #guard_msgs in
 #print coeDep.sum3.C4.test.compose0.T4
 
 /--
-info: def test.compose0.coeDep.sum3.C5.test.compose0.T4 : {a : Nat} → CoeDep (sum3 a) sum3.C5 (T4 a) :=
-fun {a} => { coe := T4.C5 }
+info: def test.compose0.coeDep.sum3.C5.test.compose0.T4 : {n : Nat} → CoeDep (sum3 n) sum3.C5 (T4 n) :=
+fun {n} => { coe := T4.C5 }
 -/
 #guard_msgs in
 #print coeDep.sum3.C5.test.compose0.T4
@@ -202,7 +202,7 @@ fun {a} => { coe := coe.test.compose0.T4.sum3 }
 #print SubType.test.compose0.T4.sum3
 
 /-
- TODO: this example combines dependent types and type families, and we still don't support families.
+ TODO: this example combines depend types and type families, and we still don't support families.
 
 inductive sum5:= T6 |+ T7 |+ T6
 
